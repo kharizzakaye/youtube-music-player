@@ -104,7 +104,11 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
       return;
     }
 
+    console.log("currentIndex next", currentIndex);
+
     const nextIndex = currentIndex + 1;
+
+    console.log("nextIndex", nextIndex);
     if (nextIndex < playlist.length) {
       setCurrentIndex(nextIndex);
     } else if (repeatMode === "all") {
@@ -115,6 +119,8 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
   };
 
   const previousSong = () => {
+    console.log("currentIndex prev", currentIndex);
+
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     } else if (repeatMode === "all") {

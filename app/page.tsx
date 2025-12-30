@@ -15,8 +15,8 @@ const initialPlaylist = [
     title: "Faber Drive - Tongue Tied",
   },
   {
-    url: "https://youtu.be/KFBNM6EMeWI?list=RDMMmgIszdutx3k",
-    title: "Heaven Knows (Rock Cover)",
+    url: "https://youtu.be/6Ux6SlOE9Qk?list=RDMMmgIszdutx3k",
+    title: "The Red Jumpsuit Apparatus - Face Down",
   },
   {
     url: "https://youtu.be/ntSBKPkk4m4?list=RDMMmgIszdutx3k",
@@ -63,6 +63,9 @@ export default function YouTubeMusicPlayer() {
           <h1 className="text-5xl font-bold mb-2 text-white">
             YouTube Music Player
           </h1>
+          <p className="font-semibold text-yellow-500 text-xl">
+            Play your favorites, ad-free!
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

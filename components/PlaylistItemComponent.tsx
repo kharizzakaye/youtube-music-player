@@ -5,6 +5,7 @@ import { Music, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Song } from "@/types/music";
 import { extractYouTubeId, getThumbnailUrl } from "@/utils/youtube";
+import { TooltipComponent } from "./TooltipComponent";
 
 interface PlaylistItemProps {
   item: Song;
@@ -64,7 +65,7 @@ export const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({
           e.stopPropagation();
           onDelete(index);
         }}
-        className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-600 rounded-full transition-all"
+        className="opacity-0 group-hover:opacity-100 p-2 hover:bg-red-600 rounded-full transition-all cursor-pointer"
       >
         <Trash2 className="w-5 h-5 text-white" />
       </button>
