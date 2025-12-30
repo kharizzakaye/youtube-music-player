@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Music, PlayCircleIcon, Trash2 } from "lucide-react";
+import { Music, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Song } from "@/types/music";
 import { extractYouTubeId, getThumbnailUrl } from "@/utils/youtube";
-import { TooltipComponent } from "./TooltipComponent";
 
 interface PlaylistItemProps {
   item: Song;

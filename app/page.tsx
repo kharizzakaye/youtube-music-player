@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { usePlaylist } from "@/hooks/usePlaylist";
 import { VideoPlayerComponent } from "@/components/VideoPlayerComponent";
 import { NowPlayingComponent } from "@/components/NowPlayingComponent";
