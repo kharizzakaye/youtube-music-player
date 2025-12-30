@@ -44,7 +44,7 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
       <div className="flex items-center justify-center gap-4 mb-6">
         <button
           onClick={onToggleShuffle}
-          className={`p-3 rounded-full transition-all ${
+          className={`p-3 rounded-full transition-all cursor-pointer ${
             isShuffle
               ? "bg-red-600 text-white"
               : "bg-gray-800 text-gray-400 hover:bg-gray-700"
@@ -56,14 +56,14 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
         <button
           onClick={onPrevious}
           disabled={!canGoPrevious}
-          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <SkipBack className="w-6 h-6" />
         </button>
 
         <button
           onClick={onTogglePlay}
-          className="p-6 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-full transition-all transform hover:scale-110 shadow-lg shadow-red-900/50"
+          className="p-6 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-full transition-all transform hover:scale-110 shadow-lg shadow-red-900/50 cursor-pointer"
         >
           {isPlaying ? (
             <Pause className="w-8 h-8" />
@@ -74,14 +74,14 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
 
         <button
           onClick={onNext}
-          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all"
+          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer"
         >
           <SkipForward className="w-6 h-6" />
         </button>
 
         <button
           onClick={onToggleRepeat}
-          className={`p-3 rounded-full transition-all ${
+          className={`p-3 rounded-full transition-all cursor-pointer ${
             repeatMode !== "none"
               ? "bg-red-600 text-white"
               : "bg-gray-800 text-gray-400 hover:bg-gray-700"

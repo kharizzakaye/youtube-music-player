@@ -30,7 +30,6 @@ export const AddSongFormComponent: React.FC<AddSongFormProps> = ({
   return (
     <div className="bg-black/50 border-2 border-red-900 rounded-lg p-6">
       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-        <Plus className="w-5 h-5 text-red-500" />
         Add to Playlist
       </h3>
       <input
@@ -50,7 +49,7 @@ export const AddSongFormComponent: React.FC<AddSongFormProps> = ({
       />
       <button
         onClick={handleSubmit}
-        className="w-full py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-bold transition-all"
+        className="w-full py-3 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg font-bold transition-all cursor-pointer"
       >
         Add Song
       </button>

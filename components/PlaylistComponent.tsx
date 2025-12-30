@@ -22,7 +22,7 @@ export const PlaylistComponent: React.FC<PlaylistProps> = ({
   return (
     <div className="bg-black/50 border-2 border-red-900 rounded-lg p-6">
       <h3 className="text-xl font-bold mb-4">
-        Playlist ({songs.length} songs)
+        My Playlist ({songs.length} songs)
       </h3>
       <div className="space-y-3 max-h-150 overflow-y-auto pr-2 custom-scrollbar">
         {songs.length === 0 ? (
