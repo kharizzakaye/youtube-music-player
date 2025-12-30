@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Song, RepeatMode } from "@/types/music";
 import { extractYouTubeId } from "@/utils/youtube";
 
@@ -9,16 +9,12 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
   const [isShuffle, setIsShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>("none");
   const [playOrder, setPlayOrder] = useState<number[]>([]);
-  const [videoKey, setVideoKey] = useState(0); // Add this to force iframe reload
-
-  const videoPlayerRef = useRef<{ reload: () => void }>(null);
 
   // Initialize play order
   useEffect(() => {
     setPlayOrder(Array.from({ length: playlist.length }, (_, i) => i));
   }, [playlist.length]);
 
-  // Shuffle array
   const shuffleArray = (array: number[]): number[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -28,7 +24,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     return newArray;
   };
 
-  // Toggle shuffle
   const toggleShuffle = () => {
     if (!isShuffle) {
       const shuffled = shuffleArray(
@@ -43,7 +38,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     setIsShuffle(!isShuffle);
   };
 
-  // Toggle repeat mode
   const toggleRepeat = () => {
     const modes: RepeatMode[] = ["none", "all", "one"];
     const currentModeIndex = modes.indexOf(repeatMode);
@@ -51,7 +45,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     setRepeatMode(nextMode);
   };
 
-  // Add song
   const addSong = (title: string, url: string) => {
     const videoId = extractYouTubeId(url);
     if (videoId) {
@@ -61,7 +54,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     return false;
   };
 
-  // Delete song
   const deleteSong = (index: number) => {
     const newPlaylist = playlist.filter((_, i) => i !== index);
     setPlaylist(newPlaylist);
@@ -70,65 +62,66 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     }
   };
 
-  // Play song
   const playSong = (index: number) => {
     setCurrentIndex(index);
     setIsPlaying(true);
-    setVideoKey((prev) => prev + 1); // Force reload
   };
 
-  // Handle video end - This is the key for repeat functionality
+  // This is called when video ends
   const handleVideoEnd = useCallback(() => {
+    console.log("Video ended. Repeat mode:", repeatMode);
+
     if (repeatMode === "one") {
-      // Restart the same video
-      setVideoKey((prev) => prev + 1);
-      setIsPlaying(true);
+      // Force reload same video by toggling play state
+      setIsPlaying(false);
+      setTimeout(() => setIsPlaying(true), 100);
       return;
     }
 
     const nextIndex = currentIndex + 1;
+
     if (nextIndex < playlist.length) {
+      // Play next song
+      console.log("Playing next song:", nextIndex);
       setCurrentIndex(nextIndex);
-      setVideoKey((prev) => prev + 1);
+      setIsPlaying(true);
     } else if (repeatMode === "all") {
+      // Loop back to start
+      console.log("Looping back to start");
       setCurrentIndex(0);
-      setVideoKey((prev) => prev + 1);
+      setIsPlaying(true);
     } else {
+      // Stop playing
+      console.log("Playlist ended");
       setIsPlaying(false);
     }
   }, [currentIndex, playlist.length, repeatMode]);
 
-  // Next song
   const nextSong = () => {
     if (repeatMode === "one") {
-      setVideoKey((prev) => prev + 1);
+      setIsPlaying(false);
+      setTimeout(() => setIsPlaying(true), 100);
       return;
     }
 
     const nextIndex = currentIndex + 1;
     if (nextIndex < playlist.length) {
       setCurrentIndex(nextIndex);
-      setVideoKey((prev) => prev + 1);
     } else if (repeatMode === "all") {
       setCurrentIndex(0);
-      setVideoKey((prev) => prev + 1);
     } else {
       setIsPlaying(false);
     }
   };
 
-  // Previous song
   const previousSong = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setVideoKey((prev) => prev + 1);
     } else if (repeatMode === "all") {
       setCurrentIndex(playlist.length - 1);
-      setVideoKey((prev) => prev + 1);
     }
   };
 
-  // Get current video ID
   const getCurrentVideoId = (): string | null => {
     if (playlist.length === 0) return null;
     const actualIndex = isShuffle ? playOrder[currentIndex] : currentIndex;
@@ -146,8 +139,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     repeatMode,
     actualCurrentIndex,
     canGoPrevious,
-    videoPlayerRef,
-    videoKey,
     getCurrentVideoId,
     addSong,
     deleteSong,

@@ -1,60 +1,102 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Music } from "lucide-react";
-import { getEmbedUrl } from "@/utils/youtube";
 
 interface VideoPlayerProps {
   videoId: string | null;
   isPlaying: boolean;
-  videoKey: number; // Add this prop
-  onVideoEnd: () => void; // Add this prop
+  onVideoEnd: () => void;
+}
+
+// Declare YouTube types
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
 }
 
 export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
   videoId,
   isPlaying,
-  videoKey,
   onVideoEnd,
 }) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Listen for video end event
+  // Load YouTube IFrame API
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      // YouTube iframe API sends messages
-      if (event.data && typeof event.data === "string") {
-        try {
-          const data = JSON.parse(event.data);
-          // Check if video ended (state 0 = ended)
-          if (data.event === "onStateChange" && data.info === 0) {
+    // Check if API is already loaded
+    if (window.YT && window.YT.Player) {
+      return;
+    }
+
+    // Load the IFrame Player API code asynchronously
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+  }, []);
+
+  // Initialize player when videoId changes
+  useEffect(() => {
+    if (!videoId || !window.YT || !window.YT.Player) return;
+
+    // Destroy previous player
+    if (playerRef.current) {
+      playerRef.current.destroy();
+    }
+
+    // Create new player
+    playerRef.current = new window.YT.Player(containerRef.current, {
+      height: "400",
+      width: "100%",
+      videoId: videoId,
+      playerVars: {
+        autoplay: isPlaying ? 1 : 0,
+        controls: 1,
+        modestbranding: 1,
+        rel: 0,
+      },
+      events: {
+        onStateChange: (event: any) => {
+          console.log("Player state changed:", event.data);
+          // -1: unstarted, 0: ended, 1: playing, 2: paused, 3: buffering, 5: cued
+          if (event.data === 0) {
+            console.log("Video ended - calling onVideoEnd");
             onVideoEnd();
           }
-        } catch (e) {
-          // Not a JSON message, ignore
-        }
+        },
+      },
+    });
+
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.destroy();
       }
     };
+  }, [videoId]);
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [onVideoEnd]);
+  // Handle play/pause changes
+  useEffect(() => {
+    if (!playerRef.current) return;
+
+    try {
+      if (isPlaying) {
+        playerRef.current.playVideo();
+      } else {
+        playerRef.current.pauseVideo();
+      }
+    } catch (error) {
+      console.error("Error controlling player:", error);
+    }
+  }, [isPlaying]);
 
   return (
     <div className="bg-black rounded-lg overflow-hidden border-4 border-red-900 shadow-2xl">
       {videoId ? (
-        <iframe
-          key={videoKey} // This forces iframe to reload when key changes
-          ref={iframeRef}
-          width="100%"
-          height="400"
-          src={`${getEmbedUrl(videoId, isPlaying)}&enablejsapi=1`}
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full aspect-video"
-        />
+        <div ref={containerRef} className="w-full aspect-video" />
       ) : (
         <div className="w-full aspect-video bg-gray-900 flex items-center justify-center">
           <Music className="w-24 h-24 text-gray-700" />

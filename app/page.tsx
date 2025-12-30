@@ -33,7 +33,6 @@ export default function YouTubeMusicPlayer() {
     repeatMode,
     actualCurrentIndex,
     canGoPrevious,
-    videoKey,
     getCurrentVideoId,
     addSong,
     deleteSong,
@@ -61,7 +60,7 @@ export default function YouTubeMusicPlayer() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2  text-white">
+          <h1 className="text-5xl font-bold mb-2 text-white">
             YouTube Music Player
           </h1>
         </div>
@@ -72,7 +71,6 @@ export default function YouTubeMusicPlayer() {
             <VideoPlayerComponent
               videoId={currentVideoId}
               isPlaying={isPlaying}
-              videoKey={videoKey}
               onVideoEnd={handleVideoEnd}
             />
 
