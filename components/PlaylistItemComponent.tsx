@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Music, Trash2 } from "lucide-react";
+import { Music, PlayCircleIcon, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Song } from "@/types/music";
 import { extractYouTubeId, getThumbnailUrl } from "@/utils/youtube";
@@ -35,9 +35,13 @@ export const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({
         }`}
       onClick={() => onPlay(index)}
     >
-      <div className="shrink-0 w-12 h-12 bg-gray-800 rounded flex items-center justify-center text-gray-400 font-bold">
+      <div
+        className={`shrink-0 w-12 h-12 rounded flex items-center justify-center text-gray-400 font-bold ${
+          isActive ? "bg-black" : "bg-gray-800 "
+        }`}
+      >
         {isActive ? (
-          <Music className="w-6 h-6 text-red-500 animate-pulse" />
+          <Music className="w-6 h-6 text-white animate-pulse" />
         ) : (
           <span>{index + 1}</span>
         )}
@@ -57,7 +61,7 @@ export const PlaylistItemComponent: React.FC<PlaylistItemProps> = ({
         <p className="text-white font-medium truncate">
           {item.title || "Untitled"}
         </p>
-        <p className="text-gray-400 text-sm truncate">{item.url}</p>
+        {/* <p className="text-gray-400 text-sm truncate">{item.url}</p> */}
       </div>
 
       <button
