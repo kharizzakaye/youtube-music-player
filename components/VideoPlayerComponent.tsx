@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Music } from "lucide-react";
 
 interface VideoPlayerProps {
   videoId: string | null;
   isPlaying: boolean;
   onVideoEnd: () => void;
+  onPlayerReady: (ready: boolean) => void;
 }
 
 // Declare YouTube types
@@ -21,9 +22,11 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
   videoId,
   isPlaying,
   onVideoEnd,
+  onPlayerReady,
 }) => {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
 
   // Load YouTube IFrame API
   useEffect(() => {
@@ -43,6 +46,9 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
   useEffect(() => {
     if (!videoId || !window.YT || !window.YT.Player) return;
 
+    setIsPlayerReady(false);
+    onPlayerReady(false);
+
     // Destroy previous player
     if (playerRef.current) {
       playerRef.current.destroy();
@@ -54,7 +60,7 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
       width: "100%",
       videoId: videoId,
       playerVars: {
-        autoplay: isPlaying ? 1 : 0,
+        autoplay: 0,
         controls: 1,
         modestbranding: 1,
         rel: 0,
@@ -62,6 +68,8 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
       events: {
         onReady: (event: any) => {
           console.log("Player ready");
+          setIsPlayerReady(true);
+          onPlayerReady(true);
           // If should be playing when ready, start playback
           if (isPlaying) {
             event.target.playVideo();
@@ -87,7 +95,7 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
 
   // Handle play/pause changes
   useEffect(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || !isPlayerReady) return;
 
     try {
       if (isPlaying) {
@@ -98,12 +106,24 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
     } catch (error) {
       console.error("Error controlling player:", error);
     }
-  }, [isPlaying]);
+  }, [isPlaying, isPlayerReady]);
 
   return (
-    <div className="bg-black rounded-lg overflow-hidden border-4 border-red-900 shadow-2xl">
+    <div className="bg-black rounded-lg overflow-hidden border-4 border-red-900 shadow-2xl relative">
       {videoId ? (
-        <div ref={containerRef} className="w-full aspect-video" />
+        <>
+          <div ref={containerRef} className="w-full aspect-video" />
+          {!isPlayerReady && (
+            <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-500 mx-auto mb-4"></div>
+                <p className="text-white text-xl font-semibold">
+                  Loading YouTube Player...
+                </p>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <div className="w-full aspect-video bg-gray-900 flex items-center justify-center">
           <Music className="w-24 h-24 text-gray-700" />

@@ -19,6 +19,7 @@ interface PlaybackControlsProps {
   currentIndex: number;
   playlistLength: number;
   canGoPrevious: boolean;
+  isPlayerReady: boolean;
   onTogglePlay: () => void;
   onToggleShuffle: () => void;
   onToggleRepeat: () => void;
@@ -33,6 +34,7 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
   currentIndex,
   playlistLength,
   canGoPrevious,
+  isPlayerReady,
   onTogglePlay,
   onToggleShuffle,
   onToggleRepeat,
@@ -41,29 +43,36 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
 }) => {
   return (
     <div className="bg-black/50 border-2 border-red-900 rounded-lg p-6">
+      {!isPlayerReady && (
+        <div className="mb-4 text-center text-yellow-400 font-semibold">
+          ⚠️ YouTube Player Loading - Controls Disabled
+        </div>
+      )}
       <div className="flex items-center justify-center gap-4 mb-6">
         <button
           onClick={onToggleShuffle}
+          disabled={!isPlayerReady}
           className={`p-3 rounded-full transition-all cursor-pointer ${
             isShuffle
               ? "bg-red-600 text-white"
               : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-          }`}
+          } disabled:opacity-30 disabled:cursor-not-allowed`}
         >
           <Shuffle className="w-5 h-5" />
         </button>
 
         <button
           onClick={onPrevious}
-          disabled={!canGoPrevious}
-          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!canGoPrevious || !isPlayerReady}
+          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <SkipBack className="w-6 h-6" />
         </button>
 
         <button
           onClick={onTogglePlay}
-          className="p-6 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-full transition-all transform hover:scale-110 shadow-lg shadow-red-900/50 cursor-pointer"
+          disabled={!isPlayerReady}
+          className="p-6 bg-linear-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-full transition-all transform hover:scale-110 shadow-lg shadow-red-900/50 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:transform-none"
         >
           {isPlaying ? (
             <Pause className="w-8 h-8" />
@@ -74,18 +83,20 @@ export const PlaybackControlsComponent: React.FC<PlaybackControlsProps> = ({
 
         <button
           onClick={onNext}
-          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer"
+          disabled={!isPlayerReady}
+          className="p-3 bg-gray-800 hover:bg-gray-700 rounded-full transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <SkipForward className="w-6 h-6" />
         </button>
 
         <button
           onClick={onToggleRepeat}
+          disabled={!isPlayerReady}
           className={`p-3 rounded-full transition-all cursor-pointer ${
             repeatMode !== "none"
               ? "bg-red-600 text-white"
               : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-          }`}
+          } disabled:opacity-30 disabled:cursor-not-allowed`}
         >
           {repeatMode === "one" ? (
             <Repeat1 className="w-5 h-5" />

@@ -6,6 +6,7 @@ import { NowPlayingComponent } from "@/components/NowPlayingComponent";
 import { PlaybackControlsComponent } from "@/components/PlaybackControlsComponent";
 import { AddSongFormComponent } from "@/components/AddSongFormComponent";
 import { PlaylistComponent } from "@/components/PlaylistComponent";
+import { useState } from "react";
 
 const initialPlaylist = [
   {
@@ -43,6 +44,8 @@ export default function YouTubeMusicPlayer() {
     handleVideoEnd,
   } = usePlaylist(initialPlaylist);
 
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
+
   const handleAddSong = (title: string, url: string) => {
     const success = addSong(title, url);
     if (!success) {
@@ -52,6 +55,9 @@ export default function YouTubeMusicPlayer() {
 
   const currentVideoId = getCurrentVideoId();
   const currentSong = playlist[actualCurrentIndex] || null;
+
+  console.log("currentVideoId", currentVideoId);
+  console.log("currentSong", currentSong);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-black via-red-950 to-black text-white p-4 md:p-8">
@@ -73,6 +79,7 @@ export default function YouTubeMusicPlayer() {
               videoId={currentVideoId}
               isPlaying={isPlaying}
               onVideoEnd={handleVideoEnd}
+              onPlayerReady={setIsPlayerReady}
             />
 
             <NowPlayingComponent song={currentSong} />
@@ -84,6 +91,7 @@ export default function YouTubeMusicPlayer() {
               currentIndex={currentIndex}
               playlistLength={playlist.length}
               canGoPrevious={canGoPrevious}
+              isPlayerReady={isPlayerReady}
               onTogglePlay={() => setIsPlaying(!isPlaying)}
               onToggleShuffle={toggleShuffle}
               onToggleRepeat={toggleRepeat}
