@@ -26,9 +26,7 @@ export const PlaylistComponent: React.FC<PlaylistProps> = ({
       </h3>
       <div className="space-y-3 max-h-150 overflow-y-auto pr-2 custom-scrollbar">
         {songs.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">
-            No songs in playlist. Add some!
-          </p>
+          <p className="text-gray-500 text-center py-8">No songs available</p>
         ) : (
           songs.map((item, index) => (
             <PlaylistItemComponent
