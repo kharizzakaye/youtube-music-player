@@ -60,6 +60,13 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
         rel: 0,
       },
       events: {
+        onReady: (event: any) => {
+          console.log("Player ready");
+          // If should be playing when ready, start playback
+          if (isPlaying) {
+            event.target.playVideo();
+          }
+        },
         onStateChange: (event: any) => {
           console.log("Player state changed:", event.data);
           // -1: unstarted, 0: ended, 1: playing, 2: paused, 3: buffering, 5: cued
