@@ -56,9 +56,6 @@ export default function YouTubeMusicPlayer() {
   const currentVideoId = getCurrentVideoId();
   const currentSong = playlist[actualCurrentIndex] || null;
 
-  console.log("currentVideoId", currentVideoId);
-  console.log("currentSong", currentSong);
-
   return (
     <div className="min-h-screen bg-linear-to-br from-black via-red-950 to-black text-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
