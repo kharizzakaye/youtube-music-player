@@ -42,6 +42,7 @@ export default function YouTubeMusicPlayer() {
     toggleRepeat,
     setIsPlaying,
     handleVideoEnd,
+    shouldRestart,
   } = usePlaylist(initialPlaylist);
 
   const [isPlayerReady, setIsPlayerReady] = useState(false);
@@ -77,6 +78,7 @@ export default function YouTubeMusicPlayer() {
               isPlaying={isPlaying}
               onVideoEnd={handleVideoEnd}
               onPlayerReady={setIsPlayerReady}
+              shouldRestart={shouldRestart}
             />
 
             <NowPlayingComponent song={currentSong} />

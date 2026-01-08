@@ -9,6 +9,7 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
   const [isShuffle, setIsShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>("none");
   const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
+  const [shouldRestart, setShouldRestart] = useState(false);
 
   const playOrder = useMemo(() => {
     if (isShuffle && shuffledOrder.length === playlist.length) {
@@ -90,9 +91,10 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     console.log("Video ended. Repeat mode:", repeatMode);
 
     if (repeatMode === "one") {
-      // Force reload same video by toggling play state
-      setIsPlaying(false);
-      setTimeout(() => setIsPlaying(true), 100);
+      // Restart the current video
+      setShouldRestart(true);
+      // Reset the flag after a short delay
+      setTimeout(() => setShouldRestart(false), 100);
       return;
     }
 
@@ -117,8 +119,8 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
 
   const nextSong = () => {
     if (repeatMode === "one") {
-      setIsPlaying(false);
-      setTimeout(() => setIsPlaying(true), 100);
+      setShouldRestart(true);
+      setTimeout(() => setShouldRestart(false), 100);
       return;
     }
 
@@ -179,5 +181,6 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
     toggleRepeat,
     setIsPlaying,
     handleVideoEnd,
+    shouldRestart,
   };
 };

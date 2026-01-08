@@ -8,6 +8,7 @@ interface VideoPlayerProps {
   isPlaying: boolean;
   onVideoEnd: () => void;
   onPlayerReady: (ready: boolean) => void;
+  shouldRestart?: boolean;
 }
 
 // Declare YouTube types
@@ -23,6 +24,7 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
   isPlaying,
   onVideoEnd,
   onPlayerReady,
+  shouldRestart = false,
 }) => {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,6 +94,18 @@ export const VideoPlayerComponent: React.FC<VideoPlayerProps> = ({
       }
     };
   }, [videoId]);
+
+  // Handle restart
+  useEffect(() => {
+    if (shouldRestart && playerRef.current && isPlayerReady) {
+      try {
+        playerRef.current.seekTo(0);
+        playerRef.current.playVideo();
+      } catch (error) {
+        console.error("Error restarting video:", error);
+      }
+    }
+  }, [shouldRestart, isPlayerReady]);
 
   // Handle play/pause changes
   useEffect(() => {
