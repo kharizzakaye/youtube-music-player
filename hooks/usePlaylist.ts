@@ -1,19 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Song, RepeatMode } from "@/types/music";
 import { extractYouTubeId } from "@/utils/youtube";
 
 export const usePlaylist = (initialPlaylist: Song[]) => {
   const [playlist, setPlaylist] = useState<Song[]>(initialPlaylist);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>("none");
-  const [playOrder, setPlayOrder] = useState<number[]>([]);
+  const [shuffledOrder, setShuffledOrder] = useState<number[]>([]);
 
-  // Initialize play order
-  useEffect(() => {
-    setPlayOrder(Array.from({ length: playlist.length }, (_, i) => i));
-  }, [playlist.length]);
+  const playOrder = useMemo(() => {
+    if (isShuffle && shuffledOrder.length === playlist.length) {
+      return shuffledOrder;
+    }
+    return Array.from({ length: playlist.length }, (_, i) => i);
+  }, [playlist.length, isShuffle, shuffledOrder]);
 
   const shuffleArray = (array: number[]): number[] => {
     const newArray = [...array];
@@ -29,11 +31,17 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
       const shuffled = shuffleArray(
         Array.from({ length: playlist.length }, (_, i) => i)
       );
-      setPlayOrder(shuffled);
-      setCurrentIndex(0);
+      setShuffledOrder(shuffled);
+      // Don't change currentIndex if no song is selected
+      if (currentIndex !== -1) {
+        setCurrentIndex(0);
+      }
     } else {
-      setPlayOrder(Array.from({ length: playlist.length }, (_, i) => i));
-      setCurrentIndex(0);
+      setShuffledOrder([]);
+      // Don't change currentIndex if no song is selected
+      if (currentIndex !== -1) {
+        setCurrentIndex(0);
+      }
     }
     setIsShuffle(!isShuffle);
   };
@@ -57,8 +65,18 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
   const deleteSong = (index: number) => {
     const newPlaylist = playlist.filter((_, i) => i !== index);
     setPlaylist(newPlaylist);
-    if (currentIndex >= newPlaylist.length) {
+
+    if (newPlaylist.length === 0) {
+      // No songs left, reset to no selection
+      setCurrentIndex(-1);
+      setIsPlaying(false);
+    } else if (currentIndex >= newPlaylist.length) {
+      // Current song was deleted or index is out of bounds
       setCurrentIndex(Math.max(0, newPlaylist.length - 1));
+    } else if (currentIndex === index) {
+      // Current song was deleted, stop playing
+      setIsPlaying(false);
+      setCurrentIndex(-1);
     }
   };
 
@@ -123,19 +141,25 @@ export const usePlaylist = (initialPlaylist: Song[]) => {
 
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-    } else if (repeatMode === "all") {
+    } else if (repeatMode === "all" && playlist.length > 0) {
       setCurrentIndex(playlist.length - 1);
     }
   };
 
   const getCurrentVideoId = (): string | null => {
-    if (playlist.length === 0) return null;
+    if (playlist.length === 0 || currentIndex === -1) return null;
     const actualIndex = isShuffle ? playOrder[currentIndex] : currentIndex;
     return extractYouTubeId(playlist[actualIndex]?.url);
   };
 
-  const actualCurrentIndex = isShuffle ? playOrder[currentIndex] : currentIndex;
-  const canGoPrevious = currentIndex > 0 || repeatMode === "all";
+  const actualCurrentIndex =
+    currentIndex === -1
+      ? -1
+      : isShuffle
+      ? playOrder[currentIndex]
+      : currentIndex;
+  const canGoPrevious =
+    currentIndex > 0 || (repeatMode === "all" && playlist.length > 0);
 
   return {
     playlist,
