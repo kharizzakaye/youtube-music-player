@@ -20,9 +20,4 @@ The source code is public for learning and reference.
 Please do not claim this project as your own portfolio work.  
 If you’d like to use or extend it, kindly provide attribution.
 
-## 🛠️ Tech Stack
-- React
-- Next.js
-- TypeScript
-- Tailwind CSS
-- YouTube IFrame API
+© 2026 **Khariza Viloria** — Portfolio Project Licensed under the MIT License (see [LICENSE](./LICENSE) for details).
