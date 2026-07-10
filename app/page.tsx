@@ -10,12 +10,12 @@ import { useState } from "react";
 
 const initialPlaylist = [
   {
-    url: "https://youtu.be/mgIszdutx3k?list=RDMMmgIszdutx3k",
-    title: "Faber Drive - Tongue Tied",
+    url: "https://youtu.be/9E6b3swbnWg?list=RD9E6b3swbnWg",
+    title: "Chopin - Nocturne op.9 No.2",
   },
   {
-    url: "https://youtu.be/l9WKZpC9UbU?list=RDmgIszdutx3k",
-    title: "Story Of The Year - Until The Day I Die",
+    url: "https://youtu.be/yHRQ8nIAiqw?list=RDyHRQ8nIAiqw",
+    title: "Mozart - Ah vous dirai-je, Maman",
   },
   {
     url: "https://youtu.be/iAP9AF6DCu4?list=RDmgIszdutx3k",
